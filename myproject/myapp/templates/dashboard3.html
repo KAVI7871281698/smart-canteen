@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Staff Dashboard - Pending KOTs</h5>
+    </div>
+    <div class="card-body">
+        {% if kots %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>KOT #</th>
+                        <th>Order Time</th>
+                        <th>Items</th>
+                        <th>Amount</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for kot in kots %}
+                    <tr>
+                        <td>{{ kot.kot_number }}</td>
+                        <td>{{ kot.generated_at|date:"H:i" }}</td>
+                        <td>
+                            {% for item in kot.order.items.all|slice:":2" %}
+                            {{ item.quantity }}x {{ item.menu_item.name }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                            {% if kot.order.items.count > 2 %}...{% endif %}
+                        </td>
+                        <td>₹{{ kot.order.total_amount }}</td>
+                        <td>
+                            <form method="post" action="{% url 'process_kot' kot.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-success">
+                                    <i class="bi bi-check-circle"></i> Mark as Served
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-emoji-smile fs-1 text-muted"></i>
+            <h5 class="mt-3">No pending KOTs</h5>
+            <p class="text-muted">All orders have been served</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row">
+    <!-- User Profile Card -->
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                User Profile
+            </div>
+            <div class="card-body text-center">
+                {% if user.qr_code %}
+                    <img src="{{ user.qr_code.url }}" alt="QR Code" class="img-fluid mb-3" style="max-width: 200px;">
+                {% endif %}
+                <h5>{{ user.username }}</h5>
+                <p class="text-muted">{{ user.get_user_type_display }}</p>
+                <p class="fs-4">₹{{ user.wallet_balance }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Categories -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                Menu Categories
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for category in categories %}
+                    <div class="col-md-4 mb-3">
+                        <a href="{% url 'category_items' category.id %}" class="btn btn-outline-primary w-100 py-3">
+                            <i class="bi bi-cup-hot fs-4"></i><br>
+                            {{ category.name }}
+                        </a>
+                    </div>
+                    {% empty %}
+                    <div class="col-12">
+                        <p class="text-muted">No categories available.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
